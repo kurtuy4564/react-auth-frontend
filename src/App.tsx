@@ -1,7 +1,9 @@
+import { Button } from './components/ui/button'
+
 function App() {
   return (
     <>
-      <div className="text-amber-400">123</div>
+      <Button>Кнопка</Button>
     </>
   )
 }
