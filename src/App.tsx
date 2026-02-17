@@ -1,23 +1,25 @@
 import { buttonVariants } from './components/ui/button'
 import { BrowserRouter, Link, Route, Routes } from 'react-router'
-import { ThemeProvider } from './components/theme-provider'
 import { ModeToggle } from './components/ModeToggle'
+import { MainProvider } from './app/providers/MainProvider'
+import { RegisterPage } from './app/auth/register/page'
 
 function App() {
   return (
     <>
-      <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
+      <MainProvider>
         <div className='relative flex min-h-screen flex-col'>
           <div className='flex h-screen w-full items-center justify-center px-4'>
-            <ModeToggle className='absolute top-5 left-5'/>
+            <ModeToggle className='absolute top-5 left-5' />
             <BrowserRouter>
               <Routes>
                 <Route path='/' element={<MainPage />} />
+                <Route path='/auth/login' element={<RegisterPage />} />
               </Routes>
             </BrowserRouter>
           </div>
         </div>
-      </ThemeProvider>
+      </MainProvider>
     </>
   )
 }
