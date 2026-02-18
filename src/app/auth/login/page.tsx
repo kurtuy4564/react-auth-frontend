@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react'
+import { LoginForm } from '@/features/auth/components/LoginForm'
 
-interface LoginPageProps {}
-
-export const LoginPage = ({}: LoginPageProps) => {
-  return <></>
+export const LoginPage = () => {
+  return <LoginForm />
 }

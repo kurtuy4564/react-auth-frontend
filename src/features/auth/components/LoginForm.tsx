@@ -1,6 +1,6 @@
 import { AuthWrapper } from './AuthWrapper'
 import { useForm } from 'react-hook-form'
-import { RegisterSchema, type TypeRegisterSchema } from '../schemes'
+import { LoginSchema, type TypeLoginSchema } from '../schemes'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Button,
@@ -14,24 +14,23 @@ import {
 } from '@/components/ui'
 import { useTheme } from '@/app/providers'
 import { useState } from 'react'
-import ReCAPTCHA from 'react-google-recaptcha'
 import { toast } from 'sonner'
+import ReCAPTCHA from 'react-google-recaptcha'
 
-export const RegisterForm = () => {
+export const LoginForm = () => {
   const { theme } = useTheme()
   const [recap, setRecap] = useState<string | null>(null)
 
-  const form = useForm<TypeRegisterSchema>({
-    resolver: zodResolver(RegisterSchema),
+  const form = useForm<TypeLoginSchema>({
+    resolver: zodResolver(LoginSchema),
     defaultValues: {
       name: '',
       email: '',
       password: '',
-      passwordRepeat: '',
     },
   })
 
-  const onSubmit = (values: TypeRegisterSchema) => {
+  const onSubmit = (values: TypeLoginSchema) => {
     if (recap) {
       console.log(values)
     } else {
@@ -42,10 +41,10 @@ export const RegisterForm = () => {
   return (
     <>
       <AuthWrapper
-        heading='Регистрация'
+        heading='Войти'
         description='Чтобы войти на сайт введите ваш email и пароль'
-        backButtonLabel='Уже есть аккаунт? Войти'
-        backButtonHref='/auth/login'
+        backButtonLabel='Еще нет аккаунта? Регистрация'
+        backButtonHref='/auth/register'
         isShowSocial>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='grid gap-2 space-y-2'>
@@ -90,20 +89,6 @@ export const RegisterForm = () => {
                 </FormItem>
               )}
             />
-
-            <FormField
-              control={form.control}
-              name='passwordRepeat'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Подтверждение пароля</FormLabel>
-                  <FormControl>
-                    <Input placeholder='******' type='password' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
             <div className='flex justify-center'>
               <ReCAPTCHA
                 sitekey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY as string}
@@ -112,7 +97,7 @@ export const RegisterForm = () => {
               />
             </div>
 
-            <Button type='submit'>Создать аккаунт</Button>
+            <Button type='submit'>Войти в аккаунт</Button>
           </form>
         </Form>
       </AuthWrapper>

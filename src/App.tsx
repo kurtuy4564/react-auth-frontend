@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Route, Routes } from 'react-router'
 import { ModeToggle } from './components/ModeToggle'
 import { MainProvider } from './app/providers/MainProvider'
 import { RegisterPage } from './app/auth/register/page'
+import { LoginPage } from './app/auth/login/page'
 
 function App() {
   return (
@@ -14,7 +15,8 @@ function App() {
             <BrowserRouter>
               <Routes>
                 <Route path='/' element={<MainPage />} />
-                <Route path='/auth/login' element={<RegisterPage />} />
+                <Route path='/auth/login' element={<LoginPage />} />
+                <Route path='/auth/register' element={<RegisterPage />} />
               </Routes>
             </BrowserRouter>
           </div>
