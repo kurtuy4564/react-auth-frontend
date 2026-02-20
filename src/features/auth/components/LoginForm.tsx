@@ -16,23 +16,28 @@ import { useTheme } from '@/app/providers'
 import { useState } from 'react'
 import { toast } from 'sonner'
 import ReCAPTCHA from 'react-google-recaptcha'
+import { useLoginMutation } from '../hooks/useLoginMutation'
+import { Link } from 'react-router'
 
 export const LoginForm = () => {
   const { theme } = useTheme()
   const [recap, setRecap] = useState<string | null>(null)
+  const [isShowTwoFactor, setIsShowTwoFactor] = useState(false)
 
   const form = useForm<TypeLoginSchema>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      name: '',
       email: '',
       password: '',
+      
     },
   })
 
+  const { login, isLoadingLogin } = useLoginMutation(setIsShowTwoFactor)
+
   const onSubmit = (values: TypeLoginSchema) => {
     if (recap) {
-      console.log(values)
+      login({ values, recaptcha: recap })
     } else {
       toast.error('Пожалуйта, завершите reCAPTCHA')
     }
@@ -48,47 +53,74 @@ export const LoginForm = () => {
         isShowSocial>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='grid gap-2 space-y-2'>
-            <FormField
-              control={form.control}
-              name='name'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Имя</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Иван' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {isShowTwoFactor && (
+              <FormField
+                control={form.control}
+                name='code'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Код</FormLabel>
+                    <FormControl>
+                      <Input
+                        disabled={isLoadingLogin}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+            {!isShowTwoFactor && (
+              <>
+                <FormField
+                  control={form.control}
+                  name='email'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Почта</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='ivan@example.com'
+                          disabled={isLoadingLogin}
+                          type='email'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <FormField
-              control={form.control}
-              name='email'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Почта</FormLabel>
-                  <FormControl>
-                    <Input placeholder='ivan@example.com' type='email' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                <FormField
+                  control={form.control}
+                  name='password'
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className='flex items-center justify-between'>
+                        <FormLabel>Пароль</FormLabel>
+                        <Link
+                          to='/auth/reset-password'
+                          className='ml-auto inline-block text-sm underline'>
+                          Забыли пароль?
+                        </Link>
+                      </div>
 
-            <FormField
-              control={form.control}
-              name='password'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Пароль</FormLabel>
-                  <FormControl>
-                    <Input placeholder='******' type='password' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                      <FormControl>
+                        <Input
+                          placeholder='******'
+                          disabled={isLoadingLogin}
+                          type='password'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
+
             <div className='flex justify-center'>
               <ReCAPTCHA
                 sitekey={import.meta.env.VITE_GOOGLE_RECAPTCHA_SITE_KEY as string}
@@ -97,7 +129,9 @@ export const LoginForm = () => {
               />
             </div>
 
-            <Button type='submit'>Войти в аккаунт</Button>
+            <Button disabled={isLoadingLogin} type='submit'>
+              Войти в аккаунт
+            </Button>
           </form>
         </Form>
       </AuthWrapper>

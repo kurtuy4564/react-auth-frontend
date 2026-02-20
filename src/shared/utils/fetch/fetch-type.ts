@@ -1,5 +1,3 @@
-import type { P } from 'node_modules/react-router/dist/development/router-5iOvts3c.d.mts'
-
 export type TypeSearchParams = {
   [key: string]:
     | string
